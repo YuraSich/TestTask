@@ -18,12 +18,12 @@
     <ClCompile Include="TestTask.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Premetives.cpp">
+    <ClCompile Include="Primitives.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Premetives.h">
+    <ClInclude Include="Primitives.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
   </ItemGroup>

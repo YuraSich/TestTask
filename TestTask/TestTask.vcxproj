@@ -141,11 +141,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Premetives.cpp" />
+    <ClCompile Include="Primitives.cpp" />
     <ClCompile Include="TestTask.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Premetives.h" />
+    <ClInclude Include="Primitives.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
