@@ -3,17 +3,17 @@
 void Platform::Draw() {
   glBegin(GL_QUADS);
   glColor3f(1.0, 1.0, 0.0);
-  glVertex2f(this->x - this->len / 2, this->y - 4);  // Слева вверху
-  glVertex2f(this->x + this->len / 2, this->y - 4);  // Справа вверху
-  glVertex2f(this->x + this->len / 2, this->y + 4);  // Справа внизу
-  glVertex2f(this->x - this->len / 2, this->y + 4);  // Слева внизу
+  glVertex2f(this->x - this->len / 2, this->y - 4);  // РЎР»РµРІР° РІРІРµСЂС…Сѓ
+  glVertex2f(this->x + this->len / 2, this->y - 4);  // РЎРїСЂР°РІР° РІРІРµСЂС…Сѓ
+  glVertex2f(this->x + this->len / 2, this->y + 4);  // РЎРїСЂР°РІР° РІРЅРёР·Сѓ
+  glVertex2f(this->x - this->len / 2, this->y + 4);  // РЎР»РµРІР° РІРЅРёР·Сѓ
   glEnd();
 }
 
 void Platform::Reset() { this->x = WIN_WID / 2; }
 
-// ax - направление (>0 - вправо/ <0 влево)
-// возможно использовать как множитель скорости (Не реализовано)
+// ax - РЅР°РїСЂР°РІР»РµРЅРёРµ (>0 - РІРїСЂР°РІРѕ/ <0 РІР»РµРІРѕ)
+// РІРѕР·РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РєР°Рє РјРЅРѕР¶РёС‚РµР»СЊ СЃРєРѕСЂРѕСЃС‚Рё (РќРµ СЂРµР°Р»РёР·РѕРІР°РЅРѕ)
 void Platform::Move(int ax) {
   if ((this->x + this->len / 2 >= WIN_WID && ax > 0) ||
       (this->x - this->len / 2 <= 0 && ax < 0))
@@ -38,10 +38,10 @@ void Ball::Reset() {
   this->speed = 4;
 }
 
-// Возвращает 1 - в случе касания нижней стенки окна
-// В остальных случаях 0
+// Р’РѕР·РІСЂР°С‰Р°РµС‚ 1 - РІ СЃР»СѓС‡Рµ РєР°СЃР°РЅРёСЏ РЅРёР¶РЅРµР№ СЃС‚РµРЅРєРё РѕРєРЅР°
+// Р’ РѕСЃС‚Р°Р»СЊРЅС‹С… СЃР»СѓС‡Р°СЏС… 0
 int Ball::Move() {
-  // Обработка коллизий со стенками
+  // РћР±СЂР°Р±РѕС‚РєР° РєРѕР»Р»РёР·РёР№ СЃРѕ СЃС‚РµРЅРєР°РјРё
   if (this->x + 2 >= WIN_WID)
     this->dx = -1;
   else if (this->x - 2 <= 0)
@@ -53,14 +53,14 @@ int Ball::Move() {
   return 0;
 }
 
-// Обработка столкновений с Обектом
+// РћР±СЂР°Р±РѕС‚РєР° СЃС‚РѕР»РєРЅРѕРІРµРЅРёР№ СЃ РћР±РµРєС‚РѕРј
 //
-// return	true -  есть столкновение
-//			false - нет
+// return	true -  РµСЃС‚СЊ СЃС‚РѕР»РєРЅРѕРІРµРЅРёРµ
+//			false - РЅРµС‚
 //
-// TODO Возможно обработать столкновение с другим мячом
-// TODO Не всегда Корректно работает проверка в какую сторону будет отскакивать
-// шар
+// TODO Р’РѕР·РјРѕР¶РЅРѕ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ СЃС‚РѕР»РєРЅРѕРІРµРЅРёРµ СЃ РґСЂСѓРіРёРј РјСЏС‡РѕРј
+// TODO РќРµ РІСЃРµРіРґР° РљРѕСЂСЂРµРєС‚РЅРѕ СЂР°Р±РѕС‚Р°РµС‚ РїСЂРѕРІРµСЂРєР° РІ РєР°РєСѓСЋ СЃС‚РѕСЂРѕРЅСѓ Р±СѓРґРµС‚ РѕС‚СЃРєР°РєРёРІР°С‚СЊ
+// С€Р°СЂ
 bool Ball::CheckCollision(Object* o) {
   float x_right, x_left, y_top, y_bot;
   x_right = o->GetX() + o->GetSX();
@@ -70,7 +70,7 @@ bool Ball::CheckCollision(Object* o) {
 
   if (this->x - this->r <= x_right && this->x + this->r >= x_left &&
       this->y - this->r <= y_bot && this->y + this->r >= y_top) {
-    // TODO Не всегда срабатывает на углах блоков, хотя касание фиксируется
+    // TODO РќРµ РІСЃРµРіРґР° СЃСЂР°Р±Р°С‚С‹РІР°РµС‚ РЅР° СѓРіР»Р°С… Р±Р»РѕРєРѕРІ, С…РѕС‚СЏ РєР°СЃР°РЅРёРµ С„РёРєСЃРёСЂСѓРµС‚СЃСЏ
     if (x_left < this->x && this->x < x_right) this->dy = -this->dy;
     if (y_top < this->y && this->y < y_bot) this->dx = -this->dx;
     return true;
@@ -82,12 +82,12 @@ void Block::Draw() {
   glBegin(GL_QUADS);
   glColor3f(1.0, 1.0, 1.0);
   glVertex2f(this->x - this->sizeX / 2,
-             this->y - this->sizeY / 2);  // Слева вверху
+             this->y - this->sizeY / 2);  // РЎР»РµРІР° РІРІРµСЂС…Сѓ
   glVertex2f(this->x + this->sizeX / 2,
-             this->y - this->sizeY / 2);  // Справа вверху
+             this->y - this->sizeY / 2);  // РЎРїСЂР°РІР° РІРІРµСЂС…Сѓ
   glVertex2f(this->x + this->sizeX / 2,
-             this->y + this->sizeY / 2);  // Справа внизу
+             this->y + this->sizeY / 2);  // РЎРїСЂР°РІР° РІРЅРёР·Сѓ
   glVertex2f(this->x - this->sizeX / 2,
-             this->y + this->sizeY / 2);  // Слева внизу
+             this->y + this->sizeY / 2);  // РЎР»РµРІР° РІРЅРёР·Сѓ
   glEnd();
 }
