@@ -1,5 +1,4 @@
 #include "Primitives.h"
-#include<math.h>
 
 
 void Platform::Draw(){
@@ -17,6 +16,8 @@ void Platform::Reset() {
 	this->x = WIN_WID / 2;
 }
 
+// ax - направление (>0 - вправо/ <0 влево)
+// возможно использовать как множитель скорости (Не реализовано)
 void Platform::Move(int ax) {
 	if ((this->x + this->len / 2 >= WIN_WID && ax > 0) || (this->x - this->len / 2 <= 0 && ax < 0))
 		return;
@@ -42,7 +43,10 @@ void Ball::Reset() {
 	this->speed = 4;
 }
 
+// Возвращает 1 - в случе касания нижней стенки окна
+// В остальных случаях 0
 int Ball::Move() {
+	// Обработка коллизий со стенками
 	if (this->x + 2 >= WIN_WID)
 		this->dx = -1;
 	else if (this->x - 2 <= 0)
@@ -56,6 +60,14 @@ int Ball::Move() {
 	return 0;
 }
 
+
+// Обработка столкновений с Обектом
+//
+// return	true -  есть столкновение
+//			false - нет
+//
+//TODO Возможно обработать столкновение с другим мячом
+//TODO Не всегда Корректно работает проверка в какую сторону будет отскакивать шар
 bool Ball::CheckCollision(Object* o) {
 	float x_right, x_left, y_top, y_bot;
 	x_right = o->GetX() + o->GetSX();
@@ -68,6 +80,7 @@ bool Ball::CheckCollision(Object* o) {
 		this->y - this->r <= y_bot &&
 		this->y + this->r >= y_top)
 	{
+		//TODO Не всегда срабатывает на углах блоков, хотя касание фиксируется
 		if (x_left < this->x && this->x < x_right)
 			this->dy = -this->dy;
 		if (y_top < this->y && this->y < y_bot)

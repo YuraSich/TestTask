@@ -1,8 +1,12 @@
 #include <GL/glut.h>
+#include<math.h>
 
-const int WIN_WID = 512;
-const int WIN_HEI = 512;
 
+const int WIN_WID = 512; //Ширина экрана
+const int WIN_HEI = 512; //Высота экрана
+
+
+// Базовый класс для всех объектов на сцене
 class Object
 {protected:
 	float x, y;
@@ -15,6 +19,8 @@ public:
 	float GetSY() { return sizeY; };
 };
 
+
+// Класс платформы - игрок
 class Platform : public Object
 {
 private:
@@ -23,16 +29,20 @@ public:
 	Platform(float _x = WIN_WID / 2, float _len = 64, 	float _speed = 16, 	float _y = WIN_HEI - 16){
 		this->x = _x;
 		this->y = _y;
-		this->len = _len;
-		this->speed = _speed;
 		this->sizeX = len / 2;
 		this->sizeY = 8;
+
+		//
+		this->len = _len;
+		this->speed = _speed;
 	};
 	virtual void Draw();
 	void Reset();
 	void Move(int);
 };
 
+
+// Класс шарика
 class Ball: public Object
 {
 
@@ -50,7 +60,7 @@ public:
 	bool CheckCollision(Object*);
 };
 
-
+// Класс блоков
 class Block : public Object
 {
 private:

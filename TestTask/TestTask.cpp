@@ -5,12 +5,12 @@
 #include <vector>
 
 using namespace std;
+ 
+vector <Block*> blocks;		// Вектор Блоков
+Platform* player;			// Игрок - платформа
+Ball* ball;					// Шарик
 
 
-
-vector <Block*> blocks; 
-Platform* player;
-Ball* ball;
 static bool GAME_ON_PAUSE = true;
 
 
@@ -25,6 +25,9 @@ void Initialize()
 
 void SKeyboard(int key, int x, int y)
 {
+
+	// Взависимости от первой нажатой кнопки шар примет то раправление и игра "снимается" с паузы
+	//TODO По хорошему стоит передать ответственность за выбор направления какой-нибудь другой функции
 	switch (key)
 	{
 	case GLUT_KEY_LEFT: 
@@ -46,13 +49,19 @@ void SKeyboard(int key, int x, int y)
 	}
 }
 
+
+//Новая игра
 void Restart() {
 	GAME_ON_PAUSE = true;
 	player->Reset();
 	ball->Reset();
 	blocks.clear();
+	
+	// Создать новые блоки
 	for (int ax = 0 + 52; ax < WIN_HEI - 52; ax += 52) {
 		for (int ay = 0 + 32; ay < WIN_HEI / 2; ay += 32) {
+			// Шанс, что блок появится 70%
+			//TODO По хорошему, шанс должен хоть как-то меняться (Например от уровня сложности)
 			if (rand()%10 < 7) {
 				blocks.emplace_back(new Block(ax, ay));
 			}
@@ -77,10 +86,11 @@ void Timer(int value)
 		Restart();
 	}
 	glutPostRedisplay();
-	glutTimerFunc(1, Timer, 0);
+	glutTimerFunc(10, Timer, 0);
 }
 
 
+// Функция отрисовки кадра
 void Draw(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -94,27 +104,22 @@ void Draw(void)
 
 int main(int argc, char* argv[]){
 
+	//Инициализация игрвой логики
 	auto p = new Platform();
 	auto b = new Ball();
-
 	player = p;
 	ball = b;
-
 	Restart();
 
-
+	//Инициализация графики
 	glutInit(&argc, argv);
 	glutInitWindowSize(WIN_WID, WIN_HEI);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutCreateWindow("Metelkin");
-
 	glutSpecialFunc(SKeyboard);
-
 	glutDisplayFunc(Draw);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	Initialize();
-
-	glutTimerFunc(50, Timer, 0);
-
+	glutTimerFunc(10, Timer, 0);
 	glutMainLoop();
 }
