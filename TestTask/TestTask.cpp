@@ -8,7 +8,7 @@ using namespace std;
 
 
 
-vector <shared_ptr<Object>> objects;
+vector <Block*> blocks; 
 Platform* player;
 Ball* ball;
 static bool GAME_ON_PAUSE = true;
@@ -33,7 +33,6 @@ void SKeyboard(int key, int x, int y)
 			ball->SetDX(-1);
 			ball->SetDY(-1);
 		}
-		cout << "<-\n";
 		player->Move(-1);
 		break;
 	case GLUT_KEY_RIGHT:
@@ -42,19 +41,40 @@ void SKeyboard(int key, int x, int y)
 			ball->SetDX(1);
 			ball->SetDY(-1);
 		}
-		cout << "->\n";
 		player->Move(1);
 		break;
+	}
+}
+
+void Restart() {
+	GAME_ON_PAUSE = true;
+	player->Reset();
+	ball->Reset();
+	blocks.clear();
+	for (int ax = 0 + 52; ax < WIN_HEI - 52; ax += 52) {
+		for (int ay = 0 + 32; ay < WIN_HEI / 2; ay += 32) {
+			if (rand()%10 < 7) {
+				blocks.emplace_back(new Block(ax, ay));
+			}
+		}
 	}
 }
 
 void Timer(int value)
 {
 	glColor3f(1.0, 1.0, 1.0);
-	if (ball->Move() != 0) {
-		GAME_ON_PAUSE = true;
-		player->Reset();
-		ball->Reset();
+	ball->CheckCollision(player);
+	for (auto& pointer : blocks)
+	{
+		if (ball->CheckCollision(pointer))
+		{
+			delete pointer;
+			pointer = nullptr;
+		}
+	}
+	blocks.erase(remove(blocks.begin(), blocks.end(), nullptr), blocks.end());
+	if (ball->Move() != 0 || blocks.empty()) {
+		Restart();
 	}
 	glutPostRedisplay();
 	glutTimerFunc(1, Timer, 0);
@@ -64,7 +84,9 @@ void Timer(int value)
 void Draw(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	for (auto& i : objects) {
+	player->Draw();
+	ball->Draw();
+	for (auto& i : blocks) {
 		i->Draw();
 	}
 	glutSwapBuffers();
@@ -72,14 +94,13 @@ void Draw(void)
 
 int main(int argc, char* argv[]){
 
-	objects.clear();
 	auto p = new Platform();
 	auto b = new Ball();
 
-	objects.emplace_back(p);
-	objects.emplace_back(b);
 	player = p;
 	ball = b;
+
+	Restart();
 
 
 	glutInit(&argc, argv);

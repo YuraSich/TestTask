@@ -4,17 +4,14 @@
 
 void Platform::Draw(){
 	glBegin(GL_QUADS);
-	glVertex2f(this->x - this->len / 2, WIN_HEI - 20.0f);	// Слева вверху
-	glVertex2f(this->x + this->len / 2, WIN_HEI - 20.0f);	// Справа вверху
-	glVertex2f(this->x + this->len / 2, WIN_HEI - 10.0f);	// Справа внизу
-	glVertex2f(this->x - this->len / 2, WIN_HEI - 10.0f);	// Слева внизу
+	glColor3f(1.0, 1.0, 0.0);
+	glVertex2f(this->x - this->len / 2, this->y - 4);	// Слева вверху
+	glVertex2f(this->x + this->len / 2, this->y - 4);	// Справа вверху
+	glVertex2f(this->x + this->len / 2, this->y + 4);	// Справа внизу
+	glVertex2f(this->x - this->len / 2, this->y + 4);	// Слева внизу
 	glEnd();
 }
 
-void Platform::IncreaseLen()
-{
-	this->len += 16;
-}
 
 void Platform::Reset() {
 	this->x = WIN_WID / 2;
@@ -27,10 +24,11 @@ void Platform::Move(int ax) {
 }
 
 void Ball::Draw() {
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_POLYGON);
+	glColor3f(1.0, 1.0, 1.0);
 	for (float i = 0.0; i < 2 * 3.14; i += 3.14 / 12)
 	{
-		glVertex2f(this->x + 4 * sin(i), this->y +4 * cos(i));
+		glVertex2f(this->x + this->r * sin(i), this->y + this->r * cos(i));
 	}
 	glEnd();
 }
@@ -39,9 +37,9 @@ void Ball::Draw() {
 void Ball::Reset() {
 	this->dx = 0;
 	this->dy = 0;
-	this->y = WIN_HEI - 25;
+	this->y = WIN_HEI - 30;
 	this->x = WIN_WID / 2;
-	this->speed = 8;
+	this->speed = 4;
 }
 
 int Ball::Move() {
@@ -56,4 +54,39 @@ int Ball::Move() {
 	this->x += this->dx * this->speed;
 	this->y += this->dy * this->speed;
 	return 0;
+}
+
+bool Ball::CheckCollision(Object* o) {
+	float x_right, x_left, y_top, y_bot;
+	x_right = o->GetX() + o->GetSX();
+	x_left	= o->GetX() - o->GetSX();
+	y_top	= o->GetY() - o->GetSY();
+	y_bot	= o->GetY() + o->GetSY();
+
+	if (this->x - this->r <= x_right &&
+		this->x + this->r >= x_left && 
+		this->y - this->r <= y_bot &&
+		this->y + this->r >= y_top)
+	{
+		if (x_left < this->x && this->x < x_right)
+			this->dy = -this->dy;
+		if (y_top < this->y && this->y < y_bot)
+			this->dx = -this->dx;
+		return true;
+	}
+	return false;
+
+}
+
+
+
+void Block::Draw()
+{
+	glBegin(GL_QUADS);
+	glColor3f(1.0, 1.0, 1.0);
+	glVertex2f(this->x - this->sizeX / 2, this->y - this->sizeY / 2);	// Слева вверху
+	glVertex2f(this->x + this->sizeX / 2, this->y - this->sizeY / 2);	// Справа вверху
+	glVertex2f(this->x + this->sizeX / 2, this->y + this->sizeY / 2);	// Справа внизу
+	glVertex2f(this->x - this->sizeX / 2, this->y + this->sizeY / 2);	// Слева внизу
+	glEnd();
 }
